@@ -91,11 +91,41 @@
     .advertise-btn:hover {
       background: #d9435f;
     }
+
+    .search-container {
+                      display: flex;
+                      margin-bottom: var(--spacing);
+                    }
+    #searchInput {
+      flex: 1;
+      padding: 8px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius) 0 0 var(--radius);
+      background: var(--bg);
+      color: var(--text);
+    }
+    #searchBtn {
+      padding: 8px 12px;
+      border: 1px solid var(--border);
+      border-left: none;
+      border-radius: 0 var(--radius) var(--radius) 0;
+      background: var(--accent);
+      color: #fff;
+      cursor: pointer;
+    }
+    #searchBtn:hover {
+      background: #d9435f;
+    }
+
   </style>
 </head>
 <body>
   <div class="container">
     <h1>Lucas’s Advertising Channels</h1>
+    <div class="search-container">
+      <input id="searchInput" type="text" placeholder="Search channels…" />
+      <button id="searchBtn">🔍 Search</button>
+    </div>
 
     <div id="popular" class="category">
       <div class="category-header">
@@ -126,6 +156,47 @@
       { link: "https://t.me/channelC", subs: "6k", price: "18,000 Kyats", category: "normal" },
       // … more normal channels …
     ];
+
+    const searchInput = document.getElementById('searchInput');
+const searchBtn   = document.getElementById('searchBtn');
+
+function refreshLists(filterTerm = '') {
+  // clear existing
+  document.querySelectorAll('.channel-list').forEach(ul => ul.innerHTML = '');
+  // re-render with filter
+  renderListFiltered('popular', 'popular', filterTerm);
+  renderListFiltered('normal',  'normal',  filterTerm);
+}
+
+        // a tiny variant of your renderList that also matches the term
+        function renderListFiltered(catId, category, term) {
+          const list = document.querySelector(`#${catId} .channel-list`);
+          channels
+            .filter(ch => ch.category === category
+                      && (ch.link.toLowerCase().includes(term)
+                       || ch.subs.toLowerCase().includes(term)))
+            .forEach(ch => {
+              const li = document.createElement('li');
+              li.innerHTML = `
+                <a class="channel-link" href="${ch.link}" target="_blank">
+                  ${ch.link.replace('https://t.me/','@')}
+                </a>
+                <span class="subs">${ch.subs} sub</span>
+                <span class="price">${ch.price}</span>
+              `;
+              list.appendChild(li);
+            });
+        }
+        
+        // wire the button
+        searchBtn.addEventListener('click', () => {
+          const term = searchInput.value.trim().toLowerCase();
+          refreshLists(term);
+        });
+        
+        // on first load, show all
+        refreshLists();
+
 
     function renderList(catId, filterCat) {
       const list = document.querySelector(`#${catId} .channel-list`);
