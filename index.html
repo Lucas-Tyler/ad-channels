@@ -93,40 +93,55 @@
     }
 
     .search-container {
-                      display: flex;
-                      margin-bottom: var(--spacing);
-                    }
-    #searchInput {
-      flex: 1;
-      padding: 8px;
-      border: 1px solid var(--border);
-      border-radius: var(--radius) 0 0 var(--radius);
-      background: var(--bg);
-      color: var(--text);
-    }
-    #searchBtn {
-      padding: 8px 12px;
-      border: 1px solid var(--border);
-      border-left: none;
-      border-radius: 0 var(--radius) var(--radius) 0;
-      background: var(--accent);
-      color: #fff;
-      cursor: pointer;
-    }
-    #searchBtn:hover {
-      background: #d9435f;
-    }
+        position: relative;
+        display: flex;
+        align-items: center;
+        margin-bottom: var(--spacing);
+      }
+      #searchInput {
+        flex: 1;
+        padding: 8px;
+        padding-right: 2rem;             /* make room for the “×” */
+        border: 1px solid var(--border);
+        border-radius: var(--radius) 0 0 var(--radius);
+        background: var(--bg);
+        color: var(--text);
+      }
+      .clear-btn {
+        position: absolute;
+        right: 4.5rem;                   /* tweak to sit just inside the input */
+        font-size: 1.2em;
+        color: var(--text);
+        cursor: pointer;
+        visibility: hidden;              /* hide when empty */
+      }
+      #searchInput:not(:placeholder-shown) ~ .clear-btn {
+        visibility: visible;             /* show when there’s text */
+      }
+      #searchBtn {
+        padding: 8px 12px;
+        border: 1px solid var(--border);
+        border-left: none;
+        border-radius: 0 var(--radius) var(--radius) 0;
+        background: var(--accent);
+        color: #fff;
+        cursor: pointer;
+      }
+      #searchBtn:hover { background: #d9435f; }
+
 
   </style>
 </head>
 <body>
   <div class="container">
     <h1>Lucas’s Advertising Channels</h1>
+
     <div class="search-container">
       <input id="searchInput" type="text" placeholder="Search channels…" />
+      <span id="clearBtn" class="clear-btn">&times;</span>
       <button id="searchBtn">🔍 Search</button>
     </div>
-
+    
     <div id="popular" class="category">
       <div class="category-header">
         <h2>Popular Channels</h2>
@@ -145,7 +160,7 @@
     </div>
   </div>
 
- <script>
+<script>
   const channels = [
     { link: "https://t.me/lucas_ad_agency", subs: "24k", price: "54,000 Kyats", category: "popular" },
     { link: "https://t.me/channel2",          subs: "18k", price: "45,000 Kyats", category: "popular" },
@@ -159,6 +174,7 @@
 
   const searchInput = document.getElementById('searchInput');
   const searchBtn   = document.getElementById('searchBtn');
+  const clearBtn    = document.getElementById('clearBtn');
 
   function refreshLists(filterTerm = '') {
     document.querySelectorAll('.channel-list').forEach(ul => ul.innerHTML = '');
@@ -175,12 +191,12 @@
       .filter(ch => {
         if (ch.category !== category) return false;
 
-        // 1) text match on link or subscriber count
+        // text match on link or subscriber count
         const textMatch = 
           ch.link.toLowerCase().includes(lowerTerm) ||
           ch.subs.toLowerCase().includes(lowerTerm);
 
-        // 2) numeric match on price block
+        // numeric match on price block
         let priceMatch = false;
         if (!isNaN(termNum)) {
           const priceNum = parseInt(ch.price.replace(/\D/g, ''), 10);
@@ -202,6 +218,19 @@
       });
   }
 
+  // show or hide the ❌ clear button
+  searchInput.addEventListener('input', () => {
+    clearBtn.style.visibility = searchInput.value ? 'visible' : 'hidden';
+  });
+
+  // clear the search and restore full lists
+  clearBtn.addEventListener('click', () => {
+    searchInput.value = '';
+    refreshLists('');
+    clearBtn.style.visibility = 'hidden';
+  });
+
+  // perform a search on button click
   searchBtn.addEventListener('click', () => {
     const term = searchInput.value.trim();
     refreshLists(term);
