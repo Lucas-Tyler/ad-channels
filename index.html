@@ -80,7 +80,7 @@
       max-width: 100px;
       margin: var(--spacing) auto 0;
       padding: 10px;
-      background: #17d7d7;
+      background: #047373;
       color: #fff;
       text-align: center;
       border: none;
@@ -109,7 +109,7 @@
       }
       .clear-btn {
         position: absolute;
-        right: 4.5rem;                   /* tweak to sit just inside the input */
+        right: 6rem;                   /* tweak to sit just inside the input */
         font-size: 1.2em;
         color: var(--text);
         cursor: pointer;
@@ -137,7 +137,7 @@
     <h1>Lucas’s Advertising Channels</h1>
 
     <div class="search-container">
-      <input id="searchInput" type="text" placeholder="Search channels…" />
+      <input id="searchInput" type="text" placeholder="ချန်နယ်ရှာရန်နှိပ်ပါ ..." />
       <span id="clearBtn" class="clear-btn">&times;</span>
       <button id="searchBtn">🔍 Search</button>
     </div>
@@ -148,7 +148,7 @@
         <span class="badge">BEST PRICE</span>
       </div>
       <ul class="channel-list"></ul>
-      <button class="advertise-btn">Advertise Now</button>
+      <a href="https://t.me/lucas_tyler" target="_blank" class="advertise-btn">ကြော်ငြာထည့်မယ်</a>
     </div>
 
     <div id="normal" class="category">
@@ -156,20 +156,28 @@
         <h2>Normal Channels</h2>
       </div>
       <ul class="channel-list"></ul>
-      <button class="advertise-btn">Advertise Now</button>
+      <a href="https://t.me/lucas_tyler" target="_blank" class="advertise-btn">ကြော်ငြာထည့်မယ်</a>
     </div>
   </div>
 
 <script>
   const channels = [
-    { link: "https://t.me/lucas_ad_agency", subs: "24k", price: "54,000 Kyats", category: "popular" },
-    { link: "https://t.me/channel2",          subs: "18k", price: "45,000 Kyats", category: "popular" },
-    { link: "https://t.me/channel3",          subs: "30k", price: "60,000 Kyats", category: "popular" },
-    // … more popular channels …
-    { link: "https://t.me/channelA",          subs: "5k",  price: "15,000 Kyats", category: "normal" },
-    { link: "https://t.me/channelB",          subs: "8k",  price: "20,000 Kyats", category: "normal" },
-    { link: "https://t.me/channelC",          subs: "6k",  price: "18,000 Kyats", category: "normal" },
-    // … more normal channels …
+    { link: "https://t.me/+gYcj7ZSeZs0wZDA1", subs: "35k", price: "110,000 ကျပ်", category: "popular" },
+    { link: "https://t.me/+rs3zpw5UI4NiNWFl", subs: "29k", price: "95,000 ကျပ်", category: "popular" },
+    { link: "https://t.me/+ST-rHgnGt0I3YWY1", subs: "28k", price: "90,000 ကျပ်", category: "popular" },
+    { link: "https://t.me/+5Eq238WRmXNkYTBl", subs: "28k", price: "90,000 ကျပ်", category: "popular" },
+    { link: "https://t.me/+gskJMTqJrK5iZGVl", subs: "27k", price: "85,000 ကျပ်", category: "popular" },
+    { link: "https://t.me/+Lm0xzWiijbBiNzU1", subs: "27k", price: "85,000 ကျပ်", category: "popular" },
+    { link: "https://t.me/+sZ5DZDZ0eRhjMThl", subs: "26k", price: "80,000 ကျပ်", category: "popular" },
+    { link: "https://t.me/+S41-KyxyNf1kYTA1", subs: "25k", price: "80,000 ကျပ်", category: "popular" },
+    { link: "https://t.me/+8uVszN5TzrlkOGI1", subs: "20k", price: "65,000 ကျပ်", category: "popular" },
+    { link: "https://t.me/+odsSzF10HoVmODE1", subs: "19k", price: "60,000 ကျပ်", category: "popular" },
+
+    /*
+    { link: "https://t.me/channelA", subs: "5k", price: "15,000 Kyats", category: "normal" },
+    { link: "https://t.me/channelB", subs: "8k", price: "20,000 Kyats", category: "normal" },
+    { link: "https://t.me/channelC", subs: "6k", price: "18,000 Kyats", category: "normal" },
+    */
   ];
 
   const searchInput = document.getElementById('searchInput');
@@ -185,7 +193,6 @@
   function renderListFiltered(catId, category, term) {
     const list = document.querySelector(`#${catId} .channel-list`);
     const lowerTerm = term.toLowerCase();
-    const termNum   = parseInt(lowerTerm.replace(/\D/g, ''), 10);
 
     channels
       .filter(ch => {
@@ -196,20 +203,27 @@
           ch.link.toLowerCase().includes(lowerTerm) ||
           ch.subs.toLowerCase().includes(lowerTerm);
 
-        // numeric match on price block
+        // fuzzy numeric match on price
         let priceMatch = false;
-        if (!isNaN(termNum)) {
+        const numericSearch = lowerTerm.match(/\d+/);
+        if (numericSearch) {
+          const termNum = parseInt(numericSearch[0], 10);
           const priceNum = parseInt(ch.price.replace(/\D/g, ''), 10);
           priceMatch = priceNum >= termNum && priceNum < termNum + 10000;
         }
 
         return textMatch || priceMatch;
       })
+      .sort((a, b) => {
+        const aNum = parseInt(a.price.replace(/\D/g, ''), 10);
+        const bNum = parseInt(b.price.replace(/\D/g, ''), 10);
+        return bNum - aNum;
+      })
       .forEach(ch => {
         const li = document.createElement('li');
         li.innerHTML = `
           <a class="channel-link" href="${ch.link}" target="_blank">
-            ${ch.link.replace('https://t.me/','@')}
+            ${ch.link.replace('https://t.me/', '@')}
           </a>
           <span class="subs">${ch.subs} sub</span>
           <span class="price">${ch.price}</span>
@@ -218,27 +232,24 @@
       });
   }
 
-  // show or hide the ❌ clear button
   searchInput.addEventListener('input', () => {
     clearBtn.style.visibility = searchInput.value ? 'visible' : 'hidden';
   });
 
-  // clear the search and restore full lists
   clearBtn.addEventListener('click', () => {
     searchInput.value = '';
     refreshLists('');
     clearBtn.style.visibility = 'hidden';
   });
 
-  // perform a search on button click
   searchBtn.addEventListener('click', () => {
     const term = searchInput.value.trim();
     refreshLists(term);
   });
 
-  // initial render
   refreshLists();
 </script>
+
 
 </body>
 </html>
