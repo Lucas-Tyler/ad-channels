@@ -171,7 +171,7 @@
     { link: "https://t.me/+sZ5DZDZ0eRhjMThl", subs: "26k", price: "80,000 ကျပ်", category: "popular" },
     { link: "https://t.me/+S41-KyxyNf1kYTA1", subs: "25k", price: "80,000 ကျပ်", category: "popular" },
     { link: "https://t.me/+8uVszN5TzrlkOGI1", subs: "20k", price: "65,000 ကျပ်", category: "popular" },
-    { link: "https://t.me/+odsSzF10HoVmODE1", subs: "19k", price: "60,000 ကျပ်", category: "popular" },
+    { link: "https://t.me/+odsSzF10HoVmODE1", subs: "25k", price: "80,000 ကျပ်", category: "popular" },
 
     /*
     { link: "https://t.me/channelA", subs: "5k", price: "15,000 Kyats", category: "normal" },
@@ -248,6 +248,16 @@
   });
 
   refreshLists();
+
+window.onload = function () {
+  if (!sessionStorage.getItem("reloaded")) {
+    sessionStorage.setItem("reloaded", "true");
+    location.reload();
+  } else {
+    sessionStorage.removeItem("reloaded"); // allow future reloads
+  }
+};
+
 </script>
 
 
